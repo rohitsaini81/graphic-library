@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+#include "./source/methods/compileShader.h"
+
 // Vertex data for a simple triangle
 GLfloat vertices[] = {
     0.0f,  0.5f, 0.0f,  // Top vertex
@@ -43,44 +45,7 @@ const char* fragmentShaderSource = R"(
     }
 )";
 
-// Compile shader
-GLuint compileShader(GLenum type, const char* source) {
-    GLuint shader = glCreateShader(type);
-    glShaderSource(shader, 1, &source, nullptr);
-    glCompileShader(shader);
 
-    GLint success;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        char infoLog[512];
-        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        std::cerr << "Shader compilation failed:\n" << infoLog << std::endl;
-    }
-    return shader;
-}
-
-// Create shader program
-GLuint createShaderProgram() {
-    GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
-    GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
-
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-
-    GLint success;
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (!success) {
-        char infoLog[512];
-        glGetProgramInfoLog(program, 512, nullptr, infoLog);
-        std::cerr << "Shader linking failed:\n" << infoLog << std::endl;
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    return program;
-}
 
 int main() {
     if (!glfwInit()) {
@@ -88,7 +53,7 @@ int main() {
         return -1;
     }
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Random Triangle", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "zing graphic library", nullptr, nullptr);
     if (!window) {
         std::cerr << "Failed to create GLFW window!" << std::endl;
         glfwTerminate();
@@ -106,7 +71,7 @@ int main() {
 
     glViewport(0, 0, 800, 600);
 
-    GLuint shaderProgram = createShaderProgram();
+    GLuint shaderProgram = createShaderProgram(fragmentShaderSource,vertexShaderSource);
 
     GLuint VAO, VBO;
     glGenVertexArrays(1, &VAO);
@@ -118,10 +83,11 @@ int main() {
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
     glEnableVertexAttribArray(0);
-    glBindVertexArray(0);
+    // glBindVertexArray(0);
 
     GLint resolutionLoc = glGetUniformLocation(shaderProgram, "resolution");
     GLint timeLoc = glGetUniformLocation(shaderProgram, "time");
+    float one=1;
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
@@ -130,7 +96,18 @@ int main() {
 
         glUseProgram(shaderProgram);
         glUniform2f(resolutionLoc, 800.0f, 600.0f);
-        glUniform1f(timeLoc, static_cast<float>(glfwGetTime()));
+        // glUniform1f(timeLoc, static_cast<float>(glfwGetTime()));
+        glUniform1f(timeLoc, one+=0.01);
+        one= one>2?0:one;
+        vertices[0]=one;
+        vertices[3]=one-0.2;
+        vertices[6]=one+0.2;
+
+
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+
+
 
 
         glBindVertexArray(VAO);
