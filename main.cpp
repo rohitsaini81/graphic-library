@@ -97,7 +97,7 @@ int main() {
         glUseProgram(shaderProgram);
         glUniform2f(resolutionLoc, 800.0f, 600.0f);
         // glUniform1f(timeLoc, static_cast<float>(glfwGetTime()));
-        glUniform1f(timeLoc, one+=0.01);
+        glUniform1f(timeLoc, one+=0.1);
         one= one>2?0:one;
         vertices[0]=one;
         vertices[3]=one-0.2;
