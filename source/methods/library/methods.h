@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 
 
-GLFWwindow* window;
+inline GLFWwindow* window;
 int INIT_LIB();
 
 class methods {
