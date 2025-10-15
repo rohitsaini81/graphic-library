@@ -9,7 +9,13 @@ include_directories(/usr/include)
 include_directories(/usr/include)
 
 # Add the executable first
-add_executable(gp-lib main.cpp ./source/methods/compileShader.cpp)
+add_executable(gp-lib main.cpp ./source/methods/compileShader.cpp
+        source/methods/Loader.h
+        source/methods/Loader.cpp
+        source/variables.cpp
+        source/variables.h
+        source/methods/library/methods.cpp
+        source/methods/library/methods.h)
 # Link libraries
 target_link_libraries(gp-lib
         OpenGL::GL

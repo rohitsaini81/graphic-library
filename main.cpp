@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "./source/methods/compileShader.h"
-
+#include "source/methods/Loader.h"
 // Vertex data for a simple triangle
 GLfloat vertices[] = {
     0.0f,  0.5f, 0.0f,  // Top vertex
@@ -12,39 +12,8 @@ GLfloat vertices[] = {
 };
 
 // Vertex Shader
-const char* vertexShaderSource = R"(
-    #version 330 core
-    layout(location = 0) in vec3 aPos;
-    void main() {
-        gl_Position = vec4(aPos, 1.0);
-    }
-)";
-
 // Fragment Shader
-const char* fragmentShaderSource = R"(
-    #version 330 core
-    out vec4 FragColor;
-    uniform vec2 resolution;
-    uniform float time;
-    float random(vec2 p) {
-    return fract(sin(time * 2.0) * 0.5 + 0.5);
-
-
-    }
-
-    void main() {
-        vec2 uv = gl_FragCoord.xy / resolution.xy;
-
-    // Random values for each color channel
-    float r = sin(time * 2.0) * 0.5 + 0.5; // Range 0..1
-    float g = sin(time * 0.7 + 2.0) * 0.5 + 0.5;
-    float b = sin(time * 1.3 + 4.0) * 0.5 + 0.5;
-
-    FragColor = vec4(r, g, b, 1.0);
-    // FragColor = vec4(randValue, randValue, 0.3, 1.0);
-    }
-)";
-
+const char* fragmentShaderSource;
 
 
 int main() {
@@ -71,7 +40,12 @@ int main() {
 
     glViewport(0, 0, 800, 600);
 
-    GLuint shaderProgram = createShaderProgram(fragmentShaderSource,vertexShaderSource);
+
+    std::string vertexShaderSource = load_file("shaders/vertex.vs");
+    std::string fragmentShaderSource = load_file("shaders/frag.fs");
+
+
+    GLuint shaderProgram = createShaderProgram(fragmentShaderSource.c_str(),vertexShaderSource.c_str());
 
     GLuint VAO, VBO;
     glGenVertexArrays(1, &VAO);
